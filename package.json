@@ -1,0 +1,28 @@
+{
+  "name": "agendador-de-conteudo",
+  "version": "1.0.0",
+  "description": "Uma plataforma extraordinária para agendamento de conteúdo.",
+  "main": "main.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "copy-assets": "mkdir -p dist && cp -r *.html *.css ui/ services/ dist/ 2>/dev/null || true",
+    "generate-config": "node scripts/generate-config.js",
+    "build:local": "npm run clean && npm run copy-assets && echo 'Build local concluído'",
+    "build:netlify": "npm run generate-config && echo 'Build Netlify concluído'",
+    "build": "npm run build:netlify",
+    "dev": "python3 -m http.server 8000 --directory . 2>/dev/null || python -m http.server 8000 --directory . 2>/dev/null || npx serve .",
+    "preview": "npx serve .",
+    "test": "node scripts/test-config.js"
+  },
+  "keywords": ["agendador", "conteudo", "calendario", "supabase", "netlify"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

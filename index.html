@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendador de Conteúdo</title>
+    
+    <!-- Fontes e Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Floating Elements -->
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Container de Autenticação -->
+    <div id="auth-container" class="container">
+        <div class="glass-card">
+            <h1><i class="fas fa-calendar-check"></i> Agendador</h1>
+            
+            <!-- Login Form -->
+            <div id="login-view">
+                <form id="login-form">
+                    <div class="input-group">
+                        <input type="email" id="login-email" placeholder="E-mail" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="Senha" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <button type="submit" class="gradient-button">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrar
+                    </button>
+                </form>
+                <p>Não tem conta? <a href="#" id="show-signup">Cadastre-se</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-view" class="hidden">
+                <form id="signup-form">
+                    <div class="input-group">
+                        <input type="email" id="signup-email" placeholder="E-mail" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signup-password" placeholder="Senha" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <button type="submit" class="gradient-button">
+                        <i class="fas fa-user-plus"></i>
+                        Cadastrar
+                    </button>
+                </form>
+                <p>Já tem conta? <a href="#" id="show-login">Fazer login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container do Dashboard -->
+    <div id="dashboard-container" class="container hidden">
+        <header>
+            <h1><i class="fas fa-calendar-check"></i> Agendador de Conteúdo</h1>
+            <div class="header-actions">
+                <a href="#" id="profile-link" class="header-btn">
+                    <i class="fas fa-user"></i>
+                    Perfil
+                </a>
+                <button id="logout-btn" class="header-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Calendário -->
+            <div id="calendar-container" class="glass-card">
+                <div id="calendar-filters">
+                    <div class="filter-group">
+                        <label><input type="checkbox" name="filter-type" value="1" checked> <i class="fas fa-font"></i> Texto</label>
+                        <label><input type="checkbox" name="filter-type" value="2" checked> <i class="fas fa-image"></i> Imagem</label>
+                        <label><input type="checkbox" name="filter-type" value="3" checked> <i class="fas fa-video"></i> Vídeo</label>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="Buscar conteúdo...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="tab-link active" data-tab="content">
+                        <i class="fas fa-plus"></i>
+                        Novo Conteúdo
+                    </button>
+                    <button class="tab-link" data-tab="stats">
+                        <i class="fas fa-chart-bar"></i>
+                        Estatísticas
+                    </button>
+                </div>
+
+                <!-- Tab de Conteúdo -->
+                <div id="content" class="tab-content active">
+                    <h2><i class="fas fa-edit"></i> Criar/Editar Conteúdo</h2>
+                    <form id="content-form">
+                        <input type="hidden" id="content-id">
+                        
+                        <div class="form-group">
+                            <label for="content-title"><i class="fas fa-heading"></i> Título</label>
+                            <input type="text" id="content-title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content-type"><i class="fas fa-layer-group"></i> Tipo de Conteúdo</label>
+                            <select id="content-type" required>
+                                <option value="">Selecione o tipo</option>
+                                <option value="text">Texto</option>
+                                <option value="image">Imagem</option>
+                                <option value="video">Vídeo</option>
+                            </select>
+                        </div>
+
+                        <!-- Campos de Texto -->
+                        <div id="text-fields" class="hidden">
+                            <div class="form-group">
+                                <label for="content-text"><i class="fas fa-align-left"></i> Conteúdo</label>
+                                <textarea id="content-text" placeholder="Digite seu texto aqui..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Campos de Imagem -->
+                        <div id="image-fields" class="hidden">
+                            <div class="form-group">
+                                <label for="content-image"><i class="fas fa-image"></i> Arquivo de Imagem</label>
+                                <input type="file" id="content-image" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="content-caption-image"><i class="fas fa-comment"></i> Legenda</label>
+                                <textarea id="content-caption-image" placeholder="Legenda da imagem..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Campos de Vídeo -->
+                        <div id="video-fields" class="hidden">
+                            <div class="form-group">
+                                <label for="content-video"><i class="fas fa-video"></i> Arquivo de Vídeo</label>
+                                <input type="file" id="content-video" accept="video/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="content-caption-video"><i class="fas fa-comment"></i> Legenda</label>
+                                <textarea id="content-caption-video" placeholder="Legenda do vídeo..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content-date"><i class="fas fa-calendar-alt"></i> Data e Hora</label>
+                            <input type="datetime-local" id="content-date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="inline-label">
+                                <input type="checkbox" id="is-recurring">
+                                <i class="fas fa-redo"></i> Agendamento Recorrente
+                            </label>
+                        </div>
+
+                        <div id="recurring-fields" class="hidden">
+                            <div class="form-group">
+                                <label for="recurrence-freq"><i class="fas fa-repeat"></i> Frequência</label>
+                                <select id="recurrence-freq">
+                                    <option value="DAILY">Diariamente</option>
+                                    <option value="WEEKLY">Semanalmente</option>
+                                    <option value="MONTHLY">Mensalmente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="recurrence-end"><i class="fas fa-calendar-times"></i> Data de Término</label>
+                                <input type="date" id="recurrence-end">
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit">
+                                <i class="fas fa-save"></i>
+                                Salvar
+                            </button>
+                            <button type="button" id="cancel-edit-btn" class="hidden">
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </button>
+                            <button type="button" id="duplicate-btn" class="secondary hidden">
+                                <i class="fas fa-copy"></i>
+                                Duplicar
+                            </button>
+                            <button type="button" id="delete-btn" class="danger hidden">
+                                <i class="fas fa-trash"></i>
+                                Excluir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab de Estatísticas -->
+                <div id="stats" class="tab-content">
+                    <h2><i class="fas fa-chart-bar"></i> Estatísticas</h2>
+                    <div id="stats-content">
+                        <div class="stat-item">
+                            <strong><i class="fas fa-file-alt"></i> Total de Conteúdo</strong>
+                            <span id="stat-total">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong><i class="fas fa-clock"></i> Agendados</strong>
+                            <span id="stat-scheduled">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong><i class="fas fa-check-circle"></i> Publicados</strong>
+                            <span id="stat-published">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong><i class="fas fa-edit"></i> Rascunhos</strong>
+                            <span id="stat-draft">0</span>
+                        </div>
+                        <div id="stat-by-type"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Perfil -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-edit"></i> Editar Perfil</h2>
+            <form id="profile-form">
+                <div class="avatar-preview">
+                    <img id="avatar-img" src="https://via.placeholder.com/120" alt="Avatar">
+                </div>
+                
+                <div class="form-group">
+                    <label for="profile-email"><i class="fas fa-envelope"></i> E-mail</label>
+                    <input type="email" id="profile-email" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profile-name"><i class="fas fa-user"></i> Nome Completo</label>
+                    <input type="text" id="profile-name" placeholder="Digite seu nome completo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="profile-avatar"><i class="fas fa-camera"></i> Alterar Avatar</label>
+                    <input type="file" id="profile-avatar" accept="image/*">
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="gradient-button">
+                        <i class="fas fa-save"></i>
+                        Salvar Alterações
+                    </button>
+                    <button type="button" id="close-profile-modal" class="header-btn">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- 1. Dependências externas -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/rrule@2.6.4/dist/es5/rrule.min.js"></script>
+    
+    <!-- 2. Configuração -->
+    <script src="config.js"></script>
+    
+    <!-- 3. Scripts de inicialização -->
+    <script>
+        // Verificar se todas as dependências foram carregadas
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado');
+            alert('Erro: Supabase não foi carregado. Verifique sua conexão com a internet.');
+        } else if (typeof window.SUPABASE_CONFIG === 'undefined') {
+            console.error('❌ Configuração do Supabase não encontrada');
+            alert('Erro: Configure suas credenciais do Supabase no arquivo config.js');
+        } else if (typeof FullCalendar === 'undefined') {
+            console.error('❌ FullCalendar não carregado');
+            alert('Erro: FullCalendar não foi carregado. Verifique sua conexão com a internet.');
+        } else {
+            console.log('✅ Todas as dependências carregadas com sucesso');
+            
+            // Carregar módulos da aplicação
+            Promise.all([
+                import('./services/supabaseService.js'),
+                import('./ui/notifications.js'),
+                import('./ui/auth.js'),
+                import('./ui/calendar.js'),
+                import('./ui/sidebar.js'),
+                import('./ui/modals.js'),
+                import('./main.js')
+            ]).then(() => {
+                console.log('✅ Aplicação inicializada com sucesso');
+            }).catch(error => {
+                console.error('❌ Erro ao carregar módulos:', error);
+                alert('Erro ao carregar a aplicação. Verifique o console para mais detalhes.');
+            });
+        }
+    </script>
+</body>
+</html>
