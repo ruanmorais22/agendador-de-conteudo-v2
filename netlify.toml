@@ -36,6 +36,3 @@
 [context.branch-deploy.environment]
   NODE_ENV = "development"
 
-# Plugin para injetar variáveis de ambiente
-[[plugins]]
-  package = "@netlify/plugin-env-var-generator"
